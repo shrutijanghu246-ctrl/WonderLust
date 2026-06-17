@@ -55,8 +55,9 @@
     <hr/>
     <%}%>
 
-    <p><b>All Reviews</b></p>
+    <% if(listing.reviews.length > 0) {%>
     <div class="row">
+      <p><b>All Reviews</b></p>
       <% for(review of listing.reviews){%>
       <div class="card col-6 ms-3 mb-3">
         <div class="card-body">
@@ -72,6 +73,14 @@
       </div>
       <%}%>
     </div>
+    <%}%>
 
   </div>
+  
+    <div class="col-6 offset-3 mb-3">
+      <h3>Where you'll be</h3>
+      <div id="map" data-token="<%= process.env.MAP_TOKEN %>"></div>
+    </div>
+  
 </div>
+

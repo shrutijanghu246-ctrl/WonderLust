@@ -29,18 +29,15 @@ module.exports.showListing = async (req, res) => {
 
 module.exports.createNewListing = async (req, res, next) => {
   const newListing = new Listing(req.body.listing);
-  console.log(req.user);
   newListing.owner = req.user._id;
-  let url = req.body.listing.image;
-  if (!url || url.trim() === "") {
-    url =
-      "https://images.unsplash.com/photo-1625505826533-5c80aca7d157?q=80&w=1000&auto=format&fit=crop";
-  }
 
-  newListing.image = {
-    url: url,
-    filename: "listingimage",
-  };
+  let url = req.file
+    ? req.file.path
+    : "https://images.unsplash.com/photo-1625505826533-5c80aca7d157?q=80&w=1000&auto=format&fit=crop";
+  let filename = req.file ? req.file.filename : "listingimage";
+
+  newListing.image = { url, filename };
+
   await newListing.save();
   req.flash("success", "New Listing Created!");
   res.redirect("/listings");
@@ -53,7 +50,9 @@ module.exports.renderEditForm = async (req, res) => {
     req.flash("error", "Listing you requested for does not exist!");
     return res.redirect("/listings");
   }
-  res.render("listings/edit.ejs", { listing });
+  let originalImageUrl = listing.image.url;
+  originalImageUrl = originalImageUrl.replace("/upload", "/upload/w_250");
+  res.render("listings/edit.ejs", { listing, originalImageUrl });
 };
 
 module.exports.updateListing = async (req, res) => {
@@ -61,12 +60,13 @@ module.exports.updateListing = async (req, res) => {
   let listing = await Listing.findById(id);
 
   let updateData = { ...req.body.listing };
-  updateData.image = {
-    url:
-      req.body.listing.image ||
-      "https://images.unsplash.com/photo-1625505826533-5c80aca7d157?q=80&w=1000&auto=format&fit=crop",
-    filename: listing.image.filename || "listingimage",
-  };
+
+  if (req.file) {
+    updateData.image = {
+      url: req.file.path,
+      filename: req.file.filename,
+    };
+  }
 
   await Listing.findByIdAndUpdate(id, updateData);
   req.flash("success", "Listing Updated!");
