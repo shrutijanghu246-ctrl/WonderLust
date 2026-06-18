@@ -23,6 +23,8 @@ router
 //New Route
 router.get("/new", isLoggedIn, listingController.renderNewForm);
 
+router.get("/search", wrapAsync(listingController.searchListings));
+
 //Edit Route
 router.get(
   "/:id/edit",

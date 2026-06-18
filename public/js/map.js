@@ -5,7 +5,10 @@ if (mapDiv) {
 
   const mapToken = mapDiv.dataset.token;
   const coordinates = JSON.parse(mapDiv.dataset.coordinates);
-  const location = mapDiv.dataset.location; // plain string, no JSON.parse needed
+  const location = mapDiv.dataset.location;
+
+  console.log("location:", location); // ← inside the if block
+
   const map = new mapboxgl.Map({
     container: "map",
     accessToken: mapToken,
@@ -23,5 +26,3 @@ if (mapDiv) {
     )
     .addTo(map);
 }
-
-console.log("location:", mapDiv.dataset.location);

@@ -93,3 +93,20 @@ module.exports.destroyListing = async (req, res) => {
   req.flash("success", "Listing deleted!");
   res.redirect("/listings");
 };
+
+module.exports.index = async (req, res) => {
+  const { category, country } = req.query;
+  const filter = {};
+  if (category) filter.category = category;
+  if (country) filter.country = { $regex: country, $options: "i" };
+  const allListings = await Listing.find(filter);
+  res.render("listings/index.ejs", { allListings });
+};
+
+module.exports.searchListings = async (req, res) => {
+  const { q } = req.query;
+  const results = await Listing.distinct("country", {
+    country: { $regex: q, $options: "i" },
+  });
+  res.json(results);
+};
