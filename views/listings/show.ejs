@@ -77,9 +77,15 @@
 
   </div>
   
-    <div class="col-6 offset-3 mb-3">
-      <h3>Where you'll be</h3>
-      <div id="map" data-token="<%= process.env.MAP_TOKEN %>"></div>
+    
+      <div class="col-6 offset-3 mb-3">
+  <h3>Where you'll be</h3>
+  <div id="map" 
+  data-token="<%= process.env.MAP_TOKEN %>" 
+  data-coordinates="<%= JSON.stringify(listing.geometry.coordinates) %>"
+  data-location="<%= listing.location %>">
+</div>
+</div>
     </div>
   
 </div>
