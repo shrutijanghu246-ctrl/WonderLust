@@ -132,15 +132,15 @@ body {
 }
 
 .btn-search {
-  background-color: #fe424d;
-  color: #fff;
+  background-color: #fe424d !important;
+  color: #fff !important;
   border-radius: 25px;
   padding: 0 1rem 0 1rem;
 }
 
 .btn-search:hover {
-  background-color: #fe424d;
-  color: #fff;
+  background-color: #fe424d !important;
+  color: #fff !important;
 }
 .btn-search i {
   display: inline;
