@@ -89,10 +89,12 @@ app.all("*splat", (req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
+  if (res.headersSent) {
+    return next(err);
+  }
   let { statusCode = 500, message = "something went wrong!" } = err;
   res.status(statusCode).render("listings/error.ejs", { err });
 });
-
 process.on("uncaughtException", (err) => {
   console.error("Uncaught Exception:", err);
 });
