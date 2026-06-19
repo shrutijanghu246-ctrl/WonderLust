@@ -23,12 +23,8 @@ const userRouter = require("./routes/user.js");
 const dbUrl = process.env.ATLASDB_URL;
 
 main()
-  .then(() => {
-    console.log("connected to DB");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+  .then(() => console.log("connected to DB"))
+  .catch((err) => console.log(err));
 
 async function main() {
   await mongoose.connect(dbUrl);
@@ -44,13 +40,11 @@ app.use(express.static(path.join(__dirname, "/public")));
 
 const store = MongoStore.create({
   mongoUrl: dbUrl,
-  crypto: {
-    secret: process.env.SECRET,
-  },
+  crypto: { secret: process.env.SECRET },
   touchAfter: 24 * 3600,
 });
 
-store.on("error", () => {
+store.on("error", (err) => {
   console.log("ERROR in MONGO SESSION STORE", err);
 });
 
@@ -66,17 +60,12 @@ const sessionOptions = {
   },
 };
 
-app.get("/", (req, res) => {
-  res.redirect("/listings"); // ✅
-});
-
 app.use(session(sessionOptions));
 app.use(flash());
 
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
-
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
@@ -85,6 +74,10 @@ app.use((req, res, next) => {
   res.locals.error = req.flash("error");
   res.locals.currUser = req.user;
   next();
+});
+
+app.get("/", (req, res) => {
+  res.redirect("/listings");
 });
 
 app.use("/listings", listingRouter);
@@ -96,7 +89,7 @@ app.all("*splat", (req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  let { statusCode = 500, message = "somethings went wrong!" } = err;
+  let { statusCode = 500, message = "something went wrong!" } = err;
   res.status(statusCode).render("listings/error.ejs", { err });
 });
 
